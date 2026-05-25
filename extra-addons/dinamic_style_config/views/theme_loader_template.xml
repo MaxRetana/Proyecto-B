@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="dinamic_style_config_theme_link" inherit_id="web.layout" name="Dinamic Style Config Theme Link">
+        <xpath expr="//head" position="inside">
+            <link rel="stylesheet" type="text/css" href="/dinamic_style_config/theme.css"/>
+        </xpath>
+    </template>
+</odoo>
