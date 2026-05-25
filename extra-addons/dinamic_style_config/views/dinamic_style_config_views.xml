@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View dinamic.style.config View List -->
+    <record id="view_dinamic_style_config_list" model="ir.ui.view">
+        <field name="name">view.dinamic.style.config.list</field>
+        <field name="model">dinamic.style.config</field>
+        <field name="arch" type="xml">
+            <list string="Configuraciones de Estilo Dinámico">
+                <field name="name"/>
+                <field name="priority"/>
+                <field name="theme_mode"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View dinamic.style.config form -->
+    <record id="view_dinamic_style_config_form" model="ir.ui.view">
+        <field name="name">view.dinamic.style.config.form</field>
+        <field name="model">dinamic.style.config</field>
+        <field name="arch" type="xml">
+            <form string="Configuración de Estilo Dinámico">
+                <header>
+                    <button name="action_set_active" type="object" string="Activar" class="btn-primary"/>
+                    <button name="action_deactivate_all" type="object" string="Desactivar todo" class="btn-secondary" confirm="Esto desactivará todas las configuraciones de estilo. ¿Deseas continuar?"/>
+                    <field name="is_active" widget="boolean_toggle"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Nombre..." required="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Configuración">
+                            <field name="priority"/>
+                            <field name="theme_mode" required="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Colores">
+                        <group string="Colores base">
+                            <field name="primary_color" widget="color"/>
+                            <field name="secondary_color" widget="color"/>
+                            <field name="button_text_color" widget="color"/>
+                            <field name="button_secondary_text_color" widget="color"/>
+                            <field name="accent_color" widget="color"/>
+                            <field name="background_color" widget="color"/>
+                            <field name="card_bg_color" widget="color"/>
+                            <field name="text_color" widget="color"/>
+                            <field name="muted_text_color" widget="color"/>
+                            <field name="input_bg_color" widget="color"/>
+                            <field name="input_text_color" widget="color"/>
+                            <field name="input_placeholder_color" widget="color"/>
+                        </group>
+                        <group string="Botones y estados">
+                            <field name="success_color" widget="color"/>
+                            <field name="warning_color" widget="color"/>
+                            <field name="danger_color" widget="color"/>
+                            <field name="info_color" widget="color"/>
+                            <field name="hover_color" widget="color"/>
+                            <field name="link_hover_color" widget="color"/>
+                            <field name="active_color" widget="color"/>
+                            <field name="table_row_hover_bg_color" widget="color"/>
+                        </group>
+                        <group string="Navbar y menú lateral">
+                            <field name="link_color" widget="color"/>
+                            <field name="border_color" widget="color"/>
+                            <field name="navbar_bg_color" widget="color"/>
+                            <field name="navbar_text_color" widget="color"/>
+                            <field name="navbar_hover_bg_color" widget="color"/>
+                            <field name="navbar_hover_text_color" widget="color"/>
+                            <field name="navbar_icon_color" widget="color"/>
+                            <field name="navbar_icon_hover_color" widget="color"/>
+                            <field name="sidebar_bg_color" widget="color"/>
+                            <field name="menu_text_color" widget="color"/>
+                            <field name="menu_hover_bg_color" widget="color"/>
+                            <field name="menu_hover_text_color" widget="color"/>
+                            <field name="menu_active_text_color" widget="color"/>
+                            <field name="dropdown_bg_color" widget="color"/>
+                            <field name="dropdown_text_color" widget="color"/>
+                            <field name="dropdown_hover_bg_color" widget="color"/>
+                            <field name="table_header_bg_color" widget="color"/>
+                            <field name="table_header_text_color" widget="color"/>
+                            <field name="icon_color" widget="color"/>
+                            <field name="icon_hover_color" widget="color"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- View dinamic.style.config search -->
+    <record id="view_dinamic_style_config_search" model="ir.ui.view">
+        <field name="name">view.dinamic.style.config.search</field>
+        <field name="model">dinamic.style.config</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter string="Activas" name="active_only" domain="[('is_active', '=', True)]"/>
+                <separator/>
+                <filter string="Agrupar por nombre" name="group_name" context="{'group_by': 'name'}"/>
+                <filter string="Agrupar por modo" name="group_theme_mode" context="{'group_by': 'theme_mode'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action dinamic.style.config -->
+    <record id="action_dinamic_style_config" model="ir.actions.act_window">
+        <field name="name">Configuración de Estilo Dinámico</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">dinamic.style.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                No hay ejemplos, haga clic aquí para agregar una nueva Configuración de Estilo Dinámico.
+            </p>
+        </field>
+    </record>
+
+
+    <!-- Menu -->
+    <menuitem id="menu_dinamic_style_config_root" name="Configuración de Estilo Dinámico" sequence="10"/>
+    <menuitem id="menu_dinamic_style_config" name="Configuración de Estilo Dinámico" parent="menu_dinamic_style_config_root" action="action_dinamic_style_config" sequence="10"/>
+
+</odoo>
