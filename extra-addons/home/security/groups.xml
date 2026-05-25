@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Categoría en el formulario de Usuario -->
+    <record id="module_privilege_home_home" model="res.groups.privilege">
+        <field name="name">Home</field>
+        <field name="description">Nivel de acceso para el tablero de inicio</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Grupo: Lector -->
+    <record id="group_home_home_user" model="res.groups">
+        <field name="name">Usuario: Solo Lectura</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="privilege_id" ref="module_privilege_home_home"/>
+    </record>
+
+    <!-- Grupo: Administrador -->
+    <record id="group_home_home_admin" model="res.groups">
+        <field name="name">Administrador: Configuración</field>
+        <field name="implied_ids" eval="[(4, ref('group_home_home_user'))]"/>
+        <field name="privilege_id" ref="module_privilege_home_home"/>
+    </record>
+</odoo>
