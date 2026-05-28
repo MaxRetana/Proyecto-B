@@ -181,6 +181,7 @@ class PsychologicalConsultationWebsiteController(http.Controller):
             [
                 ('state', 'in', ['confirmed', 'done']),
                 ('date_consultation', '!=', False),
+                ('pacient_id.user_portal_id', '=', request.env.user.id) if request.env.user.has_group('base.group_portal') else ('psycologist_id.user_id', '=', request.env.user.id),
             ],
             order='date_consultation asc',
         )
@@ -205,6 +206,10 @@ class PsychologicalConsultationWebsiteController(http.Controller):
                 'title': f"{patient_name} con {psychologist_name}",
                 'state': consultation.state,
                 'state_label': state_labels.get(consultation.state, consultation.state),
+                'patient_name': patient_name,
+                'psychologist_name': psychologist_name,
+                'notes': consultation.notes or '',
+                'date_label': mexico_dt.strftime('%d/%m/%Y %H:%M'),
                 'date_consultation': iso_format,
             })
 

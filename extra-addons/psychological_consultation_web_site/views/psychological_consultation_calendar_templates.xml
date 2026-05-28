@@ -131,6 +131,25 @@
                             </div>
 
                             <div id="pc-calendar-grid" class="pc-calendar-grid" aria-live="polite"></div>
+
+                            <div id="pc-event-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-sm modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header py-2">
+                                            <h5 class="modal-title mb-0" id="pc-event-modal-title">Detalle de consulta</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                        </div>
+                                        <div class="modal-body py-3">
+                                            <div class="small text-muted mb-2" id="pc-event-modal-reference"></div>
+                                            <div class="mb-2"><strong>Fecha:</strong> <span id="pc-event-modal-date"></span></div>
+                                            <div class="mb-2"><strong>Estado:</strong> <span id="pc-event-modal-state"></span></div>
+                                            <div class="mb-2"><strong>Paciente:</strong> <span id="pc-event-modal-patient"></span></div>
+                                            <div class="mb-2"><strong>Psicólogo:</strong> <span id="pc-event-modal-psychologist"></span></div>
+                                            <div class="mb-0"><strong>Notas:</strong><br/><span id="pc-event-modal-notes"></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>

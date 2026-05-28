@@ -6,6 +6,14 @@
     const REQUEST_DATE_INPUT = document.getElementById('request_date');
     const REQUEST_TIME_SELECT = document.getElementById('request_time');
     const REQUEST_TIME_HELP = document.getElementById('request_time_help');
+    const EVENT_MODAL = document.getElementById('pc-event-modal');
+    const EVENT_MODAL_TITLE = document.getElementById('pc-event-modal-title');
+    const EVENT_MODAL_REFERENCE = document.getElementById('pc-event-modal-reference');
+    const EVENT_MODAL_DATE = document.getElementById('pc-event-modal-date');
+    const EVENT_MODAL_STATE = document.getElementById('pc-event-modal-state');
+    const EVENT_MODAL_PATIENT = document.getElementById('pc-event-modal-patient');
+    const EVENT_MODAL_PSYCHOLOGIST = document.getElementById('pc-event-modal-psychologist');
+    const EVENT_MODAL_NOTES = document.getElementById('pc-event-modal-notes');
 
     const WEEK_DAYS = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
     const eventsByDay = new Map();
@@ -51,6 +59,9 @@
     const createEventBadge = (eventData) => {
         const badge = document.createElement('div');
         badge.className = `pc-event pc-state-${eventData.state}`;
+        badge.setAttribute('role', 'button');
+        badge.setAttribute('tabindex', '0');
+        badge.style.cursor = 'pointer';
 
         // Extraer la hora directamente del formato ISO 8601 sin conversión de zona horaria
         let timeLabel = '--:--';
@@ -63,7 +74,72 @@
 
         badge.title = `${eventData.state_label} - ${eventData.title}`;
         badge.textContent = `${timeLabel} - ${eventData.title}`;
+        badge.addEventListener('click', () => {
+            openEventModal(eventData);
+        });
+        badge.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openEventModal(eventData);
+            }
+        });
         return badge;
+    };
+
+    const openEventModal = (eventData) => {
+        if (!EVENT_MODAL) {
+            return;
+        }
+
+        if (EVENT_MODAL_TITLE) {
+            EVENT_MODAL_TITLE.textContent = eventData.title || 'Detalle de consulta';
+        }
+        if (EVENT_MODAL_REFERENCE) {
+            EVENT_MODAL_REFERENCE.textContent = eventData.name ? `Referencia: ${eventData.name}` : '';
+        }
+        if (EVENT_MODAL_DATE) {
+            EVENT_MODAL_DATE.textContent = eventData.date_label || '';
+        }
+        if (EVENT_MODAL_STATE) {
+            EVENT_MODAL_STATE.textContent = eventData.state_label || '';
+        }
+        if (EVENT_MODAL_PATIENT) {
+            EVENT_MODAL_PATIENT.textContent = eventData.patient_name || '';
+        }
+        if (EVENT_MODAL_PSYCHOLOGIST) {
+            EVENT_MODAL_PSYCHOLOGIST.textContent = eventData.psychologist_name || '';
+        }
+        if (EVENT_MODAL_NOTES) {
+            EVENT_MODAL_NOTES.textContent = eventData.notes || 'Sin notas.';
+        }
+
+        if (window.bootstrap && window.bootstrap.Modal) {
+            const modal = window.bootstrap.Modal.getOrCreateInstance(EVENT_MODAL);
+            modal.show();
+            return;
+        }
+
+        EVENT_MODAL.classList.add('show');
+        EVENT_MODAL.style.display = 'block';
+        EVENT_MODAL.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+    };
+
+    const closeEventModal = () => {
+        if (!EVENT_MODAL) {
+            return;
+        }
+
+        if (window.bootstrap && window.bootstrap.Modal) {
+            const modal = window.bootstrap.Modal.getOrCreateInstance(EVENT_MODAL);
+            modal.hide();
+            return;
+        }
+
+        EVENT_MODAL.classList.remove('show');
+        EVENT_MODAL.style.display = 'none';
+        EVENT_MODAL.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
     };
 
     const createDayCell = (dateObj, isMuted) => {
@@ -148,6 +224,22 @@
                 visibleMonth.setMonth(visibleMonth.getMonth() + monthOffset);
                 renderMonth();
             });
+        });
+    };
+
+    const setupEventModal = () => {
+        if (!EVENT_MODAL) {
+            return;
+        }
+
+        EVENT_MODAL.addEventListener('click', (event) => {
+            if (event.target === EVENT_MODAL) {
+                closeEventModal();
+            }
+        });
+
+        document.querySelectorAll('[data-bs-dismiss="modal"]').forEach((button) => {
+            button.addEventListener('click', closeEventModal);
         });
     };
 
@@ -247,6 +339,7 @@
     };
 
     setupToolbar();
+    setupEventModal();
     loadEvents();
     setupRequestForm();
 })();
