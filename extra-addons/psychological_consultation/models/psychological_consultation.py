@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
+from datetime import datetime
+
+import pytz
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
@@ -22,11 +25,37 @@ class PsychologicalConsultation(models.Model):
     date_consultation = fields.Datetime('Fecha de Consulta', tracking=True)
     notes = fields.Text('Notas', tracking=True)
     state = fields.Selection([
+        ('draft', 'Borrador'),
         ('confirmed', 'Confirmada'),
         ('done', 'Realizada'),
         ('cancelled', 'Cancelada')
     ], string='Estado', default='confirmed', tracking=True)
     
+    def get_consultation_date_mexico_tz(self):
+        """Retorna la fecha de consulta en zona horaria de México (America/Mexico_City)."""
+        if not self.date_consultation:
+            return None
+        # date_consultation está en UTC, convertir a México
+        mexico_tz = pytz.timezone('America/Mexico_City')
+        # El datetime de Odoo viene sin timezone info (UTC), lo hacemos aware y luego convertimos
+        utc_dt = pytz.UTC.localize(self.date_consultation)
+        mexico_dt = utc_dt.astimezone(mexico_tz)
+        return mexico_dt
+    
+    def action_confirm(self):
+        for rec in self:
+            rec.state = 'confirmed'
+            rec.message_post(body=_('Consulta confirmada.'))
+            # Logica para enviar correo al paciente y psicólogo
+            # Puedes usar rec.email_pacient y rec.email_psycologist para obtener los correos y enviar notificaciones
+    
+    def action_cancel(self):
+        for rec in self:
+            rec.state = 'cancelled'
+            rec.message_post(body=_('Consulta cancelada.'))
+            # Logica para enviar correo al paciente y psicólogo sobre la cancelación
+            
+            
     
     @api.model_create_multi
     def create(self, vals_list):

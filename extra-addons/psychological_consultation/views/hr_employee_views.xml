@@ -10,8 +10,9 @@
                         <group name="general_information" string="Información General">
                             <field name="name" string="Nombre"/>
                         </group>
-                        <group name="configuration" string="Configuración" invisible="1">
+                        <group name="configuration" string="Configuración" groups="base.group_system">
                             <field name="type_of_psychologist_consultation"/>
+                            <field name="user_portal_id" options="{'no_create': True}" domain="[('share', '=', True), ('groups_id', 'in', [ref('base.group_portal')])]"/>
                         </group>
                     </group>
                     

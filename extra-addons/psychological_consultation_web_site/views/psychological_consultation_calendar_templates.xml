@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="consultations_home_page" name="Inicio Consultas Psicológicas">
+        <t t-call="website.layout">
+            <div id="wrap" class="pc-calendar-wrap">
+                <section class="pc-calendar-hero">
+                    <div class="container">
+                        <h1>Bienvenido al Consultorio</h1>
+                        <p>Solicita tu consulta en linea. Tu solicitud quedara en borrador hasta ser confirmada por el equipo.</p>
+                    </div>
+                </section>
+
+                <section class="pc-calendar-content">
+                    <div class="container">
+                        <div class="pc-calendar-panel">
+                            <t t-if="is_public">
+                                <div class="alert alert-info mb-3" role="alert">
+                                    Debes iniciar sesion como usuario portal para solicitar una consulta.
+                                    <a href="/web/login" class="btn btn-sm btn-primary ms-2">Iniciar sesion</a>
+                                </div>
+                            </t>
+
+                            <t t-if="error_message">
+                                <div class="alert alert-danger" role="alert">
+                                    <t t-esc="error_message"/>
+                                </div>
+                            </t>
+
+                            <t t-if="success_message">
+                                <div class="alert alert-success" role="alert">
+                                    <t t-esc="success_message"/>
+                                </div>
+                            </t>
+
+                            <t t-if="is_portal or is_admin or is_capturista">
+                                <h2 class="pc-current-month">Solicitar Consulta</h2>
+                                <form action="/" method="post" class="pc-request-form mt-3">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                    <t t-if="show_patient_selector">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="pacient_id">Paciente</label>
+                                            <select id="pacient_id" name="pacient_id" class="form-control" required="required">
+                                                <option value="">Selecciona un paciente</option>
+                                                <t t-foreach="patients" t-as="patient">
+                                                    <option t-att-value="patient.id" t-att-selected="patient.id == int(form_data.get('pacient_id') or 0)">
+                                                        <t t-esc="patient.name"/>
+                                                    </option>
+                                                </t>
+                                            </select>
+                                            <small class="text-muted">Selecciona el paciente para crear la consulta desde recepción o agenda.</small>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <input type="hidden" name="pacient_id" t-att-value="form_data.get('pacient_id')"/>
+                                    </t>
+
+                                    <div class="mb-3">
+                                        <label class="form-label" for="request_date">Fecha de consulta</label>
+                                        <input
+                                            id="request_date"
+                                            type="date"
+                                            name="request_date"
+                                            class="form-control"
+                                            required="required"
+                                            t-att-value="form_data.get('request_date')"
+                                        />
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label" for="request_time">Hora disponible</label>
+                                        <select id="request_time" name="request_time" class="form-control" required="required" t-att-data-selected="form_data.get('request_time') or ''">
+                                            <option value="">Selecciona primero una fecha</option>
+                                        </select>
+                                        <small id="request_time_help" class="text-muted">Las horas se cargan segun time.work.consultation.</small>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label" for="notes">Motivo o notas</label>
+                                        <textarea
+                                            id="notes"
+                                            name="notes"
+                                            class="form-control"
+                                            rows="4"
+                                            placeholder="Escribe una breve descripcion de tu solicitud"
+                                        ><t t-esc="form_data.get('notes')"/></textarea>
+                                    </div>
+
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <button type="submit" class="btn btn-primary">Enviar solicitud</button>
+                                        <a href="/psychological/consultations/calendar" class="btn btn-outline-secondary">Ver calendario confirmado</a>
+                                    </div>
+                                </form>
+                            </t>
+
+                            <t t-if="not is_portal and not is_admin and not is_capturista and not is_public">
+                                <div class="alert alert-warning" role="alert">
+                                    Esta pagina de solicitud esta destinada a usuarios portal.
+                                </div>
+                                <a href="/psychological/consultations/calendar" class="btn btn-outline-secondary">Ir al calendario</a>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="consultations_calendar_page" name="Calendario de Consultas Psicológicas">
+        <t t-call="website.layout">
+            <div id="wrap" class="pc-calendar-wrap">
+                <section class="pc-calendar-hero">
+                    <div class="container">
+                        <h1>Calendario de Consultas</h1>
+                        <p>Visualiza las consultas confirmadas y realizadas en un calendario mensual.</p>
+                    </div>
+                </section>
+
+                <section class="pc-calendar-content">
+                    <div class="container">
+                        <div class="pc-calendar-panel">
+                            <div class="pc-calendar-toolbar">
+                                <button type="button" class="pc-nav-btn" data-action="prev">Mes anterior</button>
+                                <h2 id="pc-current-month" class="pc-current-month">Cargando calendario...</h2>
+                                <button type="button" class="pc-nav-btn" data-action="next">Mes siguiente</button>
+                            </div>
+
+                            <div class="pc-legend">
+                                <span class="pc-legend-item pc-state-confirmed">Confirmada</span>
+                                <span class="pc-legend-item pc-state-done">Realizada</span>
+                            </div>
+
+                            <div id="pc-calendar-grid" class="pc-calendar-grid" aria-live="polite"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <record id="menu_psychological_consultation_calendar" model="website.menu">
+        <field name="name">Calendario de Consultas</field>
+        <field name="url">/psychological/consultations/calendar</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">80</field>
+    </record>
+
+    <!-- Ocultar visualmente elementos no deseados (Contacto, Buscador, Teléfono) -->
+    <template id="hide_website_elements" inherit_id="website.layout" name="Hide Website Elements">
+        <xpath expr="." position="inside">
+            <style>
+                /* Oculta el enlace en menús, botones y pie de página */
+                a[href="/contactus"], 
+                .nav-link[href="/contactus"],
+                [data-reference="website.menu_contactus"],
+                /* Oculta el buscador y sus iconos */
+                .oi-search,
+                .o_search_button,
+                [data-bs-target="#o_search_modal"],
+                .o_searchbar_container,
+                .website_search_box,
+                .o_wsale_products_searchbar_form,
+                a[href="/website/search"],
+                /* Oculta el número de teléfono/contacto */
+                [href^="tel:"],
+                .js_header_contact {
+                    display: none !important;
+                }
+            </style>
+        </xpath>
+    </template>
+
+    <!-- Deshabilitar el menú de 'Contáctanos' del sitio web -->
+    <record id="website.menu_contactus" model="website.menu">
+        <field name="active" eval="False"/>
+    </record>
+</odoo>

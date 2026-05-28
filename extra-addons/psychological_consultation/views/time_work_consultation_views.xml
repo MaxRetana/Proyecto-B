@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View time.work.consultation View List -->
+    <record id="view_time_work_consultation_list" model="ir.ui.view">
+        <field name="name">view.time.work.consultation.list</field>
+        <field name="model">time.work.consultation</field>
+        <field name="arch" type="xml">
+            <list string="Horarios de Trabajo para Consultas">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View time.work.consultation form -->
+    <record id="view_time_work_consultation_form" model="ir.ui.view">
+        <field name="name">view.time.work.consultation.form</field>
+        <field name="model">time.work.consultation</field>
+        <field name="arch" type="xml">
+            <form string="Horario de Trabajo para Consultas Psicológicas">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Nombre del horario..."/>
+                        </h1>
+                    </div>
+                    <group string="Líneas de horario">
+                        <field name="time_lines">
+                            <list editable="bottom">
+                                <field name="day_of_week"/>
+                                <field name="start_time"/>
+                                <field name="end_time"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- View time.work.consultation search -->
+    <record id="view_time_work_consultation_search" model="ir.ui.view">
+        <field name="name">view.time.work.consultation.search</field>
+        <field name="model">time.work.consultation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <separator/>
+                <filter string="Agrupar por nombre" name="group_name" context="{'group_by': 'name'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action time.work.consultation -->
+    <record id="action_time_work_consultation" model="ir.actions.act_window">
+        <field name="name">Horarios de Trabajo</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">time.work.consultation</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                No hay horarios de trabajo definidos. Haz clic aquí para crear uno nuevo.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu time.work.consultation -->
+    <menuitem
+        id="menu_time_work_consultation_root"
+        name="Horarios de Trabajo"
+        parent="menu_psychological_consultation_config_root"
+        groups="base.group_system"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_time_work_consultation"
+        name="Horarios de Trabajo"
+        parent="menu_time_work_consultation_root"
+        action="action_time_work_consultation"
+        sequence="10"/>
+
+</odoo>

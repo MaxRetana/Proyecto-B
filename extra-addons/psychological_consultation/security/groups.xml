@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Categoría en el formulario de Usuario -->
+    <record id="module_consultation" model="res.groups.privilege">
+        <field name="name">Consultorio</field>
+        <field name="description">Nivel de acceso para el consultorio psicológico</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Grupo: Lector -->
+    <record id="group_consultation_user" model="res.groups">
+        <field name="name">Usuario</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="privilege_id" ref="module_consultation"/>
+    </record>
+
+    <!-- Grupo: Administrador -->
+    <record id="group_consultation_admin" model="res.groups">
+        <field name="name">Administrador: Configuración</field>
+        <field name="implied_ids" eval="[(4, ref('group_consultation_user'))]"/>
+        <field name="privilege_id" ref="module_consultation"/>
+    </record>
+</odoo>

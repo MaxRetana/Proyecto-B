@@ -9,6 +9,7 @@ class HrEmployee(models.Model):
         ('patient', 'Paciente'),
         ('psychologist', 'Psicologo')
     ], string='Tipo de Consulta Psicológica', tracking=True)
+    user_portal_id = fields.Many2one('res.users', string='Usuario Portal', tracking=True)
     
     
     @api.model_create_multi

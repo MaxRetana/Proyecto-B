@@ -13,8 +13,11 @@
     "application": True,
     "depends": ["base", "mail", "hr"],
     "data": [
+        "security/groups.xml",
         "security/ir.model.access.csv",
+        "views/hr_employee_views.xml",
         "views/psychological_consultation_views.xml",
-        "views/hr_employee_views.xml"
+        "views/time_work_consultation_views.xml",
+        "views/time_work_consultation__lines_views.xml",
     ],
 }

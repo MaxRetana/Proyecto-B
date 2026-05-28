@@ -10,6 +10,7 @@
                 <field name="name"/>
                 <field name="pacient_id"/>
                 <field name="date_consultation"/>
+                <field name="state"/>
                 <field name="notes"/>
             </list>
         </field>
@@ -22,7 +23,9 @@
         <field name="arch" type="xml">
             <form string="Consulta Psicológica">
                 <header>
-                    <field name="state" widget="statusbar" statusbar_visible="confirmed,done,cancelled"/>
+                    <button name="action_confirm" string="Confirmar" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_cancel" string="Rechazar" type="object" class="btn-danger" invisible="state != 'confirmed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done,cancelled"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
