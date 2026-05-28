@@ -11,10 +11,10 @@
     "license": "LGPL-3",
     "installable": True,
     "application": True,
-    "depends": ["base"],
+    "depends": ["base", "mail", "hr"],
     "data": [
         "security/ir.model.access.csv",
         "views/psychological_consultation_views.xml",
-        "views/res_partner_views.xml"
+        "views/hr_employee_views.xml"
     ],
 }

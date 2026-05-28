@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 from . import psychological_consultation
-from . import res_partner
+from . import hr_employee

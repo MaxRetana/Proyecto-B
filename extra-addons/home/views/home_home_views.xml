@@ -59,11 +59,25 @@
         </field>
     </record>
 
+    <!-- vista list -->
+    <record id="view_home_home_list" model="ir.ui.view">
+        <field name="name">home.home.list</field>
+        <field name="model">home.home</field>
+        <field name="arch" type="xml">
+            <list string="Accesos Rápidos">
+                <field name="name"/>
+                <field name="menu_id"/>
+                <field name="fa_icon"/>
+                <field name="sequence"/>
+            </list>
+        </field>
+    </record>
+
     <!-- 3. ACCIÓN DE CONFIGURACIÓN[cite: 7] -->
     <record id="action_home_home_config" model="ir.actions.act_window">
         <field name="name">Configurar Accesos Rápidos</field>
         <field name="res_model">home.home</field>
-        <field name="view_mode">kanban,form</field>
+        <field name="view_mode">kanban,form,list</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Crea tu primer acceso rápido aquí seleccionando una aplicación instalada.

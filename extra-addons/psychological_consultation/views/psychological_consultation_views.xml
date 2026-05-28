@@ -6,8 +6,11 @@
         <field name="name">view.psychological.consultation.list</field>
         <field name="model">psychological.consultation</field>
         <field name="arch" type="xml">
-            <list>
+            <list string="Consultas Psicológicas">
                 <field name="name"/>
+                <field name="pacient_id"/>
+                <field name="date_consultation"/>
+                <field name="notes"/>
             </list>
         </field>
     </record>
@@ -17,15 +20,51 @@
         <field name="name">view.psychological.consultation.form</field>
         <field name="model">psychological.consultation</field>
         <field name="arch" type="xml">
-            <form string="Psychological Consultation">
+            <form string="Consulta Psicológica">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="confirmed,done,cancelled"/>
+                </header>
                 <sheet>
                     <div class="oe_title">
                         <label for="name"/>
                         <h1>
-                            <field name="name" placeholder="Name..."/>
+                            <field name="name" readonly="1"/>
                         </h1>
                     </div>
+                    <group>
+                        <group name="group_consultation_info" string="Información de la Consulta">
+                            <field name="date_consultation"/>
+                            <field name="state" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group name="group_participants" string="Paciente">
+                            <field name="pacient_id" domain="[('type_of_psychologist_consultation','=','patient')]" options="{'no_create_edit': False, 'no_create': True}"/>
+                            <field name="email_pacient" readonly="1"/>
+                            <field name="number_pacient" readonly="1"/>
+                        </group>
+                        <group name="group_psycologist" string="Psicólogo">
+                            <field name="psycologist_id" domain="[('type_of_psychologist_consultation','=','psychologist')]" options="{'no_create_edit': False, 'no_create': True}"/>
+                            <field name="email_psycologist" readonly="1"/>
+                            <field name="number_psycologist" readonly="1"/>
+                        </group>
+
+                    </group>
+
+                    <notebook>
+                        <page string="Notas">
+                            <group>
+                                <field name="notes" placeholder="Escribe aquí observaciones relevantes de la consulta..." nolabel="1"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
+
+                <chatter>
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </chatter>
             </form>
         </field>
     </record>
@@ -36,26 +75,48 @@
         <field name="model">psychological.consultation</field>
         <field name="arch" type="xml">
             <search>
-                <group expand="1" string="Group By">
-                    <filter string="Name" name="name" domain="[]" context="{'group_by':'name'}"/>
-                </group>
+                <field name="name"/>
+                <field name="pacient_id"/>
+                <field name="psycologist_id"/>
+                <field name="date_consultation"/>
+                <separator/>
+                <!-- Grupos -->
+                <filter name="pacient_id_group" string="Pacientes" context="{'group_by': 'pacient_id'}" />
+                <filter name="psycologist_id_group" string="Psicólogos" context="{'group_by': 'psycologist_id'}" />
+                <filter name="date_consultation_group" string="Fecha de Consulta" context="{'group_by': 'date_consultation'}" />
+                <filter name="state_group" string="Estado" context="{'group_by': 'state'}" />
+
             </search>
         </field>
     </record>
 
     <!-- Action psychological.consultation -->
     <record id="action_psychological_consultation" model="ir.actions.act_window">
-        <field name="name">Psychological Consultation</field>
+        <field name="name">Consulta Psicologica</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">psychological.consultation</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[]</field>
         <field name="context">{}</field>
         <field name="help" type="html">
+            <div class="o_view_nocontent_smiling_face">
+                Crea tu primera consulta psicológica
+            </div>
             <p class="oe_view_nocontent_create">
-                There is no examples click here to add new Psychological Consultation.
+                Haz clic en <strong>Crear</strong> para registrar una nueva cita, asignar paciente y psicólogo,
+                y dar seguimiento completo al proceso terapéutico.
+            </p>
+            <p>
+                Podrás gestionar estado, fecha de consulta, notas clínicas y mantener el historial de comunicación
+                desde el chatter.
             </p>
         </field>
     </record>
 
+
+    <!-- Elemento de menu -->
+    <menuitem id="menu_psychological_consultation_root" name="Consultorio" sequence="10"/>
+    <menuitem id="menu_psychological_consultation" name="Consultas" parent="menu_psychological_consultation_root" action="action_psychological_consultation" sequence="10"/>
+    <!-- Elemento de menu de Configuracion -->
+    <menuitem id="menu_psychological_consultation_config_root" name="Configuración" parent="menu_psychological_consultation_root" sequence="999999"/>
 </odoo>
