@@ -63,17 +63,36 @@ class PsychologicalConsultationWebsiteController(http.Controller):
         type='http',
         auth='public',
         website=True,
+        methods=['GET'],
+    )
+    def consultations_home_selector_page(self, **kwargs):
+        user = request.env.user
+        values = {
+            'is_public': user.has_group('base.group_public'),
+            'is_portal': user.has_group('base.group_portal'),
+            'is_admin': user.has_group('base.group_system'),
+            'is_psychologist': user.has_group('psychological_consultation.group_consultation_psychologist'),
+            'is_capturista': user.has_group('psychological_consultation_web_site.group_psychological_consultation_capturista'),
+        }
+        return request.render('psychological_consultation_web_site.consultations_selector_home_page', values)
+
+    @http.route(
+        '/psychological/consultations/request',
+        type='http',
+        auth='public',
+        website=True,
         methods=['GET', 'POST'],
     )
     def consultations_home_page(self, **post):
         user = request.env.user
         employee = request.env['hr.employee'].sudo().search(['|', ('user_id', '=', user.id), ('user_portal_id', '=', user.id)], limit=1)
+        is_psychologist = user.has_group('psychological_consultation.group_consultation_psychologist')
         is_capturista = user.has_group('psychological_consultation_web_site.group_psychological_consultation_capturista')
-        show_patient_selector = is_capturista
+        show_patient_selector = is_capturista or is_psychologist
         patients = request.env['hr.employee'].sudo().search([
             ('type_of_psychologist_consultation', '=', 'patient'),
             ('user_portal_id', '!=', False),
-        ], order='name') if is_capturista else request.env['hr.employee']
+        ], order='name') if show_patient_selector else request.env['hr.employee']
         is_portal = user.has_group('base.group_portal')
         is_admin = user.has_group('base.group_system')
         is_public = user.has_group('base.group_public')
@@ -82,6 +101,7 @@ class PsychologicalConsultationWebsiteController(http.Controller):
             'is_public': is_public,
             'is_portal': is_portal,
             'is_admin': is_admin,
+            'is_psychologist': is_psychologist,
             'is_capturista': is_capturista,
             'error_message': False,
             'success_message': False,
@@ -96,9 +116,9 @@ class PsychologicalConsultationWebsiteController(http.Controller):
         }
 
         if request.httprequest.method == 'POST':
-            if not is_portal and not is_admin and not is_capturista:
+            if not is_portal and not is_admin and not is_capturista and not is_psychologist:
                 if is_public:
-                    return request.redirect('/web/login?redirect=/')
+                    return request.redirect('/web/login?redirect=/psychological/consultations/request')
                 values['error_message'] = 'Solo usuarios portal autenticados pueden solicitar consultas.'
                 return request.render('psychological_consultation_web_site.consultations_home_page', values)
 
@@ -177,12 +197,22 @@ class PsychologicalConsultationWebsiteController(http.Controller):
         website=True,
     )
     def consultations_calendar_events(self, **kwargs):
+        user = request.env.user
+        domain = [
+            ('state', 'in', ['confirmed', 'done']),
+            ('date_consultation', '!=', False),
+        ]
+
+        # El psicologo siempre ve solo las consultas donde esta asignado.
+        if user.has_group('psychological_consultation.group_consultation_psychologist'):
+            domain.append(('psycologist_id.user_id', '=', user.id))
+        elif user.has_group('base.group_portal'):
+            domain.append(('pacient_id.user_portal_id', '=', user.id))
+        elif not user.has_group('base.group_system'):
+            domain.append(('psycologist_id.user_id', '=', user.id))
+
         consultations = request.env['psychological.consultation'].sudo().search(
-            [
-                ('state', 'in', ['confirmed', 'done']),
-                ('date_consultation', '!=', False),
-                ('pacient_id.user_portal_id', '=', request.env.user.id) if request.env.user.has_group('base.group_portal') else ('psycologist_id.user_id', '=', request.env.user.id),
-            ],
+            domain,
             order='date_consultation asc',
         )
 

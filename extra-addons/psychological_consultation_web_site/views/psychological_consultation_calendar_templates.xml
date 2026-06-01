@@ -1,5 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <template id="consultations_selector_home_page" name="Inicio del Consultorio">
+        <t t-call="website.layout">
+            <div id="wrap" class="pc-calendar-wrap pc-home-wrap">
+                <section class="pc-calendar-hero pc-home-hero">
+                    <div class="container">
+                        <p class="pc-home-kicker">Consultorio Psicologico</p>
+                        <h1>Elige como quieres continuar</h1>
+                        <p>Selecciona una opcion para solicitar nuevas consultas o revisar el calendario de citas confirmadas.</p>
+                    </div>
+                </section>
+
+                <section class="pc-calendar-content">
+                    <div class="container">
+                        <div class="pc-home-grid">
+                            <article class="pc-home-card">
+                                <div class="pc-home-card-icon" aria-hidden="true">&#128221;</div>
+                                <h2>Consultas</h2>
+                                <p>Registra una nueva solicitud y asigna paciente cuando corresponda.</p>
+                                <a href="/psychological/consultations/request" class="btn btn-primary">Ir al formulario</a>
+                            </article>
+
+                            <article class="pc-home-card pc-home-card-alt">
+                                <div class="pc-home-card-icon" aria-hidden="true">&#128197;</div>
+                                <h2>Calendario</h2>
+                                <p>Consulta citas confirmadas y realizadas en vista mensual interactiva.</p>
+                                <a href="/psychological/consultations/calendar" class="btn btn-outline-secondary">Ver calendario</a>
+                            </article>
+                        </div>
+
+                        <t t-if="is_public">
+                            <div class="alert alert-info mt-4 mb-0" role="alert">
+                                Inicia sesion para crear consultas o revisar tus eventos.
+                                <a href="/web/login?redirect=/" class="btn btn-sm btn-primary ms-2">Iniciar sesion</a>
+                            </div>
+                        </t>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
     <template id="consultations_home_page" name="Inicio Consultas Psicológicas">
         <t t-call="website.layout">
             <div id="wrap" class="pc-calendar-wrap">
@@ -32,9 +73,9 @@
                                 </div>
                             </t>
 
-                            <t t-if="is_portal or is_admin or is_capturista">
+                            <t t-if="is_portal or is_admin or is_capturista or is_psychologist">
                                 <h2 class="pc-current-month">Solicitar Consulta</h2>
-                                <form action="/" method="post" class="pc-request-form mt-3">
+                                <form action="/psychological/consultations/request" method="post" class="pc-request-form mt-3">
                                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
                                     <t t-if="show_patient_selector">
@@ -88,14 +129,15 @@
 
                                     <div class="d-flex gap-2 flex-wrap">
                                         <button type="submit" class="btn btn-primary">Enviar solicitud</button>
+                                        <a href="/" class="btn btn-light">Volver al inicio</a>
                                         <a href="/psychological/consultations/calendar" class="btn btn-outline-secondary">Ver calendario confirmado</a>
                                     </div>
                                 </form>
                             </t>
 
-                            <t t-if="not is_portal and not is_admin and not is_capturista and not is_public">
+                            <t t-if="not is_portal and not is_admin and not is_capturista and not is_psychologist and not is_public">
                                 <div class="alert alert-warning" role="alert">
-                                    Esta pagina de solicitud esta destinada a usuarios portal.
+                                    Esta pagina de solicitud esta destinada a usuarios portal o personal autorizado.
                                 </div>
                                 <a href="/psychological/consultations/calendar" class="btn btn-outline-secondary">Ir al calendario</a>
                             </t>

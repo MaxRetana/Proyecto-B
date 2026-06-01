@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record id="rule_psychological_consultation_psychologist_own" model="ir.rule">
+		<field name="name">Consultas: psicologo solo asignadas</field>
+		<field name="model_id" ref="model_psychological_consultation"/>
+		<field name="groups" eval="[(4, ref('group_consultation_psychologist'))]"/>
+		<field name="domain_force">[('psycologist_id.user_id', '=', user.id)]</field>
+		<field name="perm_read" eval="1"/>
+		<field name="perm_write" eval="1"/>
+		<field name="perm_create" eval="1"/>
+		<field name="perm_unlink" eval="0"/>
+	</record>
+</odoo>

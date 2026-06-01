@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="view_psychological_consultation_form_psychologist_readonly" model="ir.ui.view">
+        <field name="name">view.psychological.consultation.form.psychologist.readonly</field>
+        <field name="model">psychological.consultation</field>
+        <field name="inherit_id" ref="psychological_consultation.view_psychological_consultation_form"/>
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+
+            <!-- Paciente -->
+            <xpath expr="//group[@name='group_participants']//field[@name='pacient_id']" position="replace">
+                <field name="pacient_id"
+                       domain="[('type_of_psychologist_consultation','=','patient')]"
+                       options="{'no_create_edit': False, 'no_create': True}"
+                       groups="psychological_consultation.group_consultation_user,!psychological_consultation.group_consultation_psychologist"/>
+                <field name="pacient_id"
+                       domain="[('type_of_psychologist_consultation','=','patient')]"
+                       options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                       readonly="1"
+                       groups="psychological_consultation.group_consultation_psychologist"/>
+            </xpath>
+
+            <!-- Psicólogo -->
+            <xpath expr="//group[@name='group_psycologist']//field[@name='psycologist_id']" position="replace">
+                <field name="psycologist_id"
+                       domain="[('type_of_psychologist_consultation','=','psychologist')]"
+                       options="{'no_create_edit': False, 'no_create': True}"
+                       groups="psychological_consultation.group_consultation_user,!psychological_consultation.group_consultation_psychologist"/>
+                <field name="psycologist_id"
+                       domain="[('type_of_psychologist_consultation','=','psychologist')]"
+                       options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                       readonly="1"
+                       groups="psychological_consultation.group_consultation_psychologist"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

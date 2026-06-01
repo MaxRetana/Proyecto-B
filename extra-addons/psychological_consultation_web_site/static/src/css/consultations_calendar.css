@@ -168,9 +168,113 @@
     padding: 1rem;
 }
 
+.pc-home-wrap {
+    position: relative;
+    overflow: hidden;
+}
+
+.pc-home-wrap::before,
+.pc-home-wrap::after {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    border-radius: 999px;
+    pointer-events: none;
+    filter: blur(4px);
+}
+
+.pc-home-wrap::before {
+    width: 20rem;
+    height: 20rem;
+    top: 5rem;
+    right: -6rem;
+    background: radial-gradient(circle, rgb(20 184 166 / 20%) 0%, rgb(20 184 166 / 0%) 70%);
+}
+
+.pc-home-wrap::after {
+    width: 26rem;
+    height: 26rem;
+    bottom: -10rem;
+    left: -10rem;
+    background: radial-gradient(circle, rgb(249 115 22 / 18%) 0%, rgb(249 115 22 / 0%) 70%);
+}
+
+.pc-home-hero,
+.pc-home-wrap .pc-calendar-content {
+    position: relative;
+    z-index: 1;
+}
+
+.pc-home-kicker {
+    display: inline-block;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    background: #ecfeff;
+    border: 1px solid #bae6fd;
+    color: #0f766e;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.9rem;
+}
+
+.pc-home-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.pc-home-card {
+    border: 1px solid #dbeafe;
+    border-radius: 1rem;
+    padding: 1.2rem;
+    background: linear-gradient(155deg, #ffffff 0%, #eefbf7 100%);
+    box-shadow: 0 10px 26px rgb(15 23 42 / 8%);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.pc-home-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgb(15 23 42 / 14%);
+}
+
+.pc-home-card-alt {
+    background: linear-gradient(155deg, #ffffff 0%, #fff4e9 100%);
+    border-color: #fed7aa;
+}
+
+.pc-home-card-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.7rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    font-size: 1.15rem;
+    margin-bottom: 0.8rem;
+}
+
+.pc-home-card h2 {
+    margin: 0 0 0.45rem;
+    color: #0f172a;
+    font-size: clamp(1.2rem, 2.6vw, 1.55rem);
+}
+
+.pc-home-card p {
+    color: #334155;
+    margin-bottom: 0.9rem;
+    min-height: 3rem;
+}
+
 @media (max-width: 992px) {
     .pc-day {
         min-height: 6.8rem;
+    }
+
+    .pc-home-grid {
+        grid-template-columns: 1fr;
     }
 }
 
