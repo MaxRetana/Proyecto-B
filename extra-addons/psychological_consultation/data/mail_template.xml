@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mail_template_consultation_confirmed_psychologist" model="mail.template">
+        <field name="name">Consulta Psicologica: Confirmacion Psicologo</field>
+        <field name="model_id" ref="model_psychological_consultation"/>
+        <field name="subject">Consulta confirmada: {{ object.name or 'Sin referencia' }}</field>
+        <field name="email_from">{{ (user.email_formatted or user.email or 'noreply@example.com') }}</field>
+
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; color: #1f2937; line-height: 1.5; padding: 16px;">
+                <div style="max-width: 590px; margin: 0 auto; background-color: #FFFFFF;">
+                    <div style="background-color: #6b21a8; color: #ffffff; padding: 16px 20px; border-radius: 8px 8px 0 0;">
+                        <h2 style="margin: 0; font-size: 20px;">Consulta psicológica confirmada</h2>
+                    </div>
+                    <div style="border: 1px solid #ddd6fe; border-top: none; padding: 20px; border-radius: 0 0 8px 8px;">
+                        <p style="margin-top: 0;">Hola <t t-out="object.psycologist_id.name or 'Psicólogo'">Psicólogo</t>,</p>
+                        <p>
+                            Te confirmamos que la consulta <strong><t t-out="object.name or 'Sin referencia'">Sin referencia</t></strong>
+                            quedó agendada correctamente con <t t-out="object.pacient_id.name or 'el paciente'">el paciente</t>
+                            para el día
+                            <t t-out="object.get_consultation_date_mexico_tz().strftime('%d/%m/%Y %H:%M') if object.get_consultation_date_mexico_tz() else 'fecha por definir'">fecha por definir</t>.
+                        </p>
+                        <p>Gracias por tu apoyo y compromiso en la atención psicológica.</p>
+                        <p style="margin-bottom: 0;">Gracias.</p>
+                    </div>
+                </div>
+            </div>
+        </field>
+
+        <field name="auto_delete" eval="False"/>
+    </record>
+
+    <record id="mail_template_consultation_confirmed_patient" model="mail.template">
+        <field name="name">Consulta Psicologica: Confirmacion Paciente</field>
+        <field name="model_id" ref="model_psychological_consultation"/>
+        <field name="subject">Consulta confirmada: {{ object.name or 'Sin referencia' }}</field>
+        <field name="email_from">{{ (user.email_formatted or user.email or 'noreply@example.com') }}</field>
+
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; color: #1f2937; line-height: 1.5; padding: 16px;">
+                <div style="max-width: 590px; margin: 0 auto; background-color: #FFFFFF;">
+                    <div style="background-color: #0f766e; color: #ffffff; padding: 16px 20px; border-radius: 8px 8px 0 0;">
+                        <h2 style="margin: 0; font-size: 20px;">Consulta psicológica confirmada</h2>
+                    </div>
+                    <div style="border: 1px solid #99f6e4; border-top: none; padding: 20px; border-radius: 0 0 8px 8px;">
+                        <p style="margin-top: 0;">Hola <t t-out="object.pacient_id.name or 'Paciente'">Paciente</t>,</p>
+                        <p>
+                            Tu consulta <strong><t t-out="object.name or 'Sin referencia'">Sin referencia</t></strong> ha sido confirmada.
+                            Te atenderá <t t-out="object.psycologist_id.name or 'un profesional asignado'">un profesional asignado</t>
+                            el día
+                            <t t-out="object.get_consultation_date_mexico_tz().strftime('%d/%m/%Y %H:%M') if object.get_consultation_date_mexico_tz() else 'fecha por definir'">fecha por definir</t>.
+                        </p>
+                        <p>
+                            La sesión será en
+                            <t t-out="object.clinic_id._build_full_address() if object.clinic_id else 'la ubicación por definir'">la ubicación por definir</t>,
+                            y si necesitas comunicarte con el consultorio puedes hacerlo al
+                            <t t-out="object.clinic_id.phone if object.clinic_id and object.clinic_id.phone else 'teléfono por definir'">teléfono por definir</t>.
+                        </p>
+                        <p style="margin-bottom: 0;">
+                            En caso de que exista algún cambio en el horario, te lo notificaremos por este mismo correo.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </field>
+
+        <field name="auto_delete" eval="False"/>
+    </record>
+
+    <!-- Correo de rechazo para paciente -->
+    <record id="mail_template_consultation_rejected_patient" model="mail.template">
+        <field name="name">Consulta Psicologica: Rechazo Paciente</field>
+        <field name="model_id" ref="model_psychological_consultation"/>
+        <field name="subject">Consulta rechazada: {{ object.name or 'Sin referencia' }}</field>
+        <field name="email_from">{{ (user.email_formatted or user.email or 'noreply@example.com') }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; color: #1f2937; line-height: 1.5; padding: 16px;">
+                <div style="max-width: 590px; margin: 0 auto; background-color: #FFFFFF;">
+                    <div style="background-color: #dc2626; color: #ffffff; padding: 16px 20px; border-radius: 8px 8px 0 0;">
+                        <h2 style="margin: 0; font-size: 20px;">Consulta psicológica rechazada</h2>
+                    </div>
+                    <div style="border: 1px solid #fca5a5; border-top: none; padding: 20px; border-radius: 0 0 8px 8px;">
+                        <p style="margin-top: 0;">Hola <t t-out="object.pacient_id.name or 'Paciente'">Paciente</t>,</p>
+                        <p>
+                            Lamentamos informarte que la consulta <strong><t t-out="object.name or 'Sin referencia'">Sin referencia</t></strong>
+                            programada para
+                            <t t-out="object.get_consultation_date_mexico_tz().strftime('%d/%m/%Y %H:%M') if object.get_consultation_date_mexico_tz() else 'fecha por definir'">fecha por definir</t>
+                            no pudo ser confirmada en esta ocasión.
+                        </p>
+                        <p>
+                            La atención estaba prevista con <t t-out="object.psycologist_id.name or 'un profesional por asignar'">un profesional por asignar</t>.
+                            <t t-if="object.notes">
+                                Como referencia adicional: <t t-out="object.notes">Notas</t>.
+                            </t>
+                        </p>
+                        <p>
+                            Motivo reportado: <strong><t t-out="ctx.get('rejection_reason') or 'Sin especificar'">Sin especificar</t></strong>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+
+    <!-- Correo de rechazo para psicólogo -->
+    <record id="mail_template_consultation_rejected_psychologist" model="mail.template">
+        <field name="name">Consulta Psicologica: Rechazo Psicologo</field>
+        <field name="model_id" ref="model_psychological_consultation"/>
+        <field name="subject">Consulta rechazada: {{ object.name or 'Sin referencia' }}</field>
+        <field name="email_from">{{ (user.email_formatted or user.email or 'noreply@example.com') }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; color: #1f2937; line-height: 1.5; padding: 16px;">
+                <div style="max-width: 590px; margin: 0 auto; background-color: #FFFFFF;">
+                    <div style="background-color: #b91c1c; color: #ffffff; padding: 16px 20px; border-radius: 8px 8px 0 0;">
+                        <h2 style="margin: 0; font-size: 20px;">Consulta psicológica cancelada</h2>
+                    </div>
+                    <div style="border: 1px solid #fecaca; border-top: none; padding: 20px; border-radius: 0 0 8px 8px;">
+                        <p style="margin-top: 0;">Hola <t t-out="object.psycologist_id.name or 'Psicólogo'">Psicólogo</t>,</p>
+                        <p>
+                            Te informamos que la consulta <strong><t t-out="object.name or 'Sin referencia'">Sin referencia</t></strong>
+                            de <t t-out="object.pacient_id.name or 'paciente por definir'">paciente por definir</t>,
+                            prevista para
+                            <t t-out="object.get_consultation_date_mexico_tz().strftime('%d/%m/%Y %H:%M') if object.get_consultation_date_mexico_tz() else 'fecha por definir'">fecha por definir</t>,
+                            fue rechazada y no continuará en agenda.
+                        </p>
+                        <p>
+                            <t t-if="object.notes">
+                                Nota relacionada: <t t-out="object.notes">Notas</t>.
+                            </t>
+                            <t t-if="not object.notes">
+                                No se registraron notas adicionales para este cambio.
+                            </t>
+                        </p>
+                        <p>
+                            Motivo reportado: <strong><t t-out="ctx.get('rejection_reason') or 'Sin especificar'">Sin especificar</t></strong>.
+                        </p>
+                        <p style="margin-bottom: 0;">Gracias por tu comprensión.</p>
+                    </div>
+                </div>
+            </div>
+        </field>
+        <field name="auto_delete" eval="False"/>
+    </record>
+</odoo>

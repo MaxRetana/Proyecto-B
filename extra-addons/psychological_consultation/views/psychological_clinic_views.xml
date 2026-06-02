@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View psychological.clinic View List -->
+    <record id="view_psychological_clinic_list" model="ir.ui.view">
+        <field name="name">view.psychological.clinic.list</field>
+        <field name="model">psychological.clinic</field>
+        <field name="arch" type="xml">
+            <list string="Clínicas Psicológicas">
+                <field name="name"/>
+                <field name="city"/>
+                <field name="state"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View psychological.clinic form -->
+    <record id="view_psychological_clinic_form" model="ir.ui.view">
+        <field name="name">view.psychological.clinic.form</field>
+        <field name="model">psychological.clinic</field>
+        <field name="arch" type="xml">
+            <form string="Clínica Psicológica">
+                <header>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Nombre de la clínica..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Datos de contacto">
+                            <field name="phone"/>
+                            <field name="email"/>
+                        </group>
+                        <group string="Ubicación">
+                            <field name="latitude"/>
+                            <field name="longitude"/>
+                            <field name="maps_url" widget="url" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Dirección">
+                        <field name="address"/>
+                        <field name="city"/>
+                        <field name="state"/>
+                        <field name="zip_code"/>
+                        <field name="country"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- View psychological.clinic search -->
+    <record id="view_psychological_clinic_search" model="ir.ui.view">
+        <field name="name">view.psychological.clinic.search</field>
+        <field name="model">psychological.clinic</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="city"/>
+                <field name="state"/>
+                <field name="country"/>
+                <field name="phone"/>
+                <filter string="Activas" name="active" domain="[('active','=',True)]"/>
+                <filter string="Inactivas" name="inactive" domain="[('active','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action psychological.clinic -->
+    <record id="action_psychological_clinic" model="ir.actions.act_window">
+        <field name="name">Clínicas Psicológicas</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">psychological.clinic</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                No hay clínicas registradas. Haz clic en crear para añadir una nueva.
+            </p>
+        </field>
+    </record>
+
+
+    <menuitem id="menu_psychological_clinic_root" name="Clínicas" parent="menu_psychological_consultation_config_root" sequence="10"/>
+
+    <menuitem id="menu_psychological_clinic" name="Clínicas" parent="menu_psychological_clinic_root" action="action_psychological_clinic" sequence="10"/>
+
+</odoo>

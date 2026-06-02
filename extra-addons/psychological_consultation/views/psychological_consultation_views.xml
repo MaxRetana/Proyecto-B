@@ -8,6 +8,8 @@
         <field name="arch" type="xml">
             <list string="Consultas Psicológicas">
                 <field name="name"/>
+                <field name="clinic_id"/>
+                <field name="psycologist_id"/>
                 <field name="pacient_id"/>
                 <field name="date_consultation"/>
                 <field name="state"/>
@@ -24,7 +26,7 @@
             <form string="Consulta Psicológica">
                 <header>
                     <button name="action_confirm" string="Confirmar" type="object" class="btn-primary" invisible="state != 'draft'"/>
-                    <button name="action_cancel" string="Rechazar" type="object" class="btn-danger" invisible="state != 'confirmed'"/>
+                    <button name="cancelation_wizard" string="Rechazar" type="object" class="btn-danger" invisible="state != 'confirmed'"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done,cancelled"/>
                 </header>
                 <sheet>
@@ -36,6 +38,7 @@
                     </div>
                     <group>
                         <group name="group_consultation_info" string="Información de la Consulta">
+                            <field name="clinic_id" options="{'no_create_edit': True, 'no_create': True}"/>
                             <field name="date_consultation"/>
                             <field name="state" readonly="1"/>
                         </group>

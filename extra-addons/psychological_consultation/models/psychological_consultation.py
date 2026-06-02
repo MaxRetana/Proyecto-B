@@ -29,7 +29,8 @@ class PsychologicalConsultation(models.Model):
         ('confirmed', 'Confirmada'),
         ('done', 'Realizada'),
         ('cancelled', 'Cancelada')
-    ], string='Estado', default='confirmed', tracking=True)
+    ], string='Estado', default='draft', tracking=True)
+    clinic_id = fields.Many2one('psychological.clinic', string='Clínica', tracking=True)
     
     def get_consultation_date_mexico_tz(self):
         """Retorna la fecha de consulta en zona horaria de México (America/Mexico_City)."""
@@ -46,14 +47,110 @@ class PsychologicalConsultation(models.Model):
         for rec in self:
             rec.state = 'confirmed'
             rec.message_post(body=_('Consulta confirmada.'))
-            # Logica para enviar correo al paciente y psicólogo
-            # Puedes usar rec.email_pacient y rec.email_psycologist para obtener los correos y enviar notificaciones
+            rec._send_confirmation_emails()
+
+    def _send_confirmation_emails(self):
+        template_patient = self.env.ref(
+            'psychological_consultation.mail_template_consultation_confirmed_patient',
+            raise_if_not_found=False,
+        )
+        template_psychologist = self.env.ref(
+            'psychological_consultation.mail_template_consultation_confirmed_psychologist',
+            raise_if_not_found=False,
+        )
+
+        recipient_values = [
+            (template_patient, self.pacient_id.name or 'Paciente', self.email_pacient),
+            (template_psychologist, self.psycologist_id.name or 'Psicologo', self.email_psycologist),
+        ]
+
+        for template, recipient_name, email_to in recipient_values:
+            if not template:
+                _logger.warning('No se encontro la plantilla de confirmacion para: %s', recipient_name)
+                continue
+            if not email_to:
+                _logger.info('No hay correo configurado para el destinatario: %s', recipient_name)
+                continue
+            try:
+                mail_id = template.send_mail(
+                    self.id,
+                    force_send=True,
+                    email_values={'email_to': email_to},
+                )
+                if mail_id:
+                    _logger.info('Correo de confirmacion enviado a %s (%s)', recipient_name, email_to)
+            except Exception as e:
+                _logger.exception(
+                    'Error enviando correo de confirmacion de consulta %s a %s: %s',
+                    self.name,
+                    email_to,
+                    str(e)
+                )
+            
+            
+    def cancelation_wizard(self):
+        if self.state in ['done', 'cancelled']:
+            raise UserError(_('No se puede cancelar una consulta que ya está realizada o cancelada.'))
+        return {
+            'name': _('Cancelar Consulta Psicológica'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'psychological.consultation.cancelation',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'active_id': self.id},
+        }
     
-    def action_cancel(self):
+    def action_cancel(self, reason):
         for rec in self:
             rec.state = 'cancelled'
-            rec.message_post(body=_('Consulta cancelada.'))
-            # Logica para enviar correo al paciente y psicólogo sobre la cancelación
+            rec.message_post(body=_('Consulta cancelada. Razón: %s', reason or 'Sin especificar'))
+            rec._send_rejection_emails(reason)
+
+    def _send_rejection_emails(self, reason):
+        template_rejection_patient = self.env.ref(
+            'psychological_consultation.mail_template_consultation_rejected_patient',
+            raise_if_not_found=False,
+        )
+        template_rejection_psychologist = self.env.ref(
+            'psychological_consultation.mail_template_consultation_rejected_psychologist',
+            raise_if_not_found=False,
+        )
+
+        recipient_values = [
+            (
+                template_rejection_patient,
+                self.pacient_id.name or 'Paciente',
+                self.email_pacient,
+            ),
+            (
+                template_rejection_psychologist,
+                self.psycologist_id.name or 'Psicologo',
+                self.email_psycologist,
+            ),
+        ]
+
+        for template, recipient_name, email_to in recipient_values:
+            if not template:
+                _logger.warning('No se encontro la plantilla de rechazo para: %s', recipient_name)
+                continue
+            if not email_to:
+                _logger.info('No hay correo configurado para el destinatario: %s', recipient_name)
+                continue
+            try:
+                mail_id = template.with_context(rejection_reason=reason or 'Sin especificar').send_mail(
+                    self.id,
+                    force_send=True,
+                    email_values={'email_to': email_to},
+                )
+                if mail_id:
+                    _logger.info('Correo de rechazo enviado a %s (%s)', recipient_name, email_to)
+            except Exception as e:
+                _logger.exception(
+                    'Error enviando correo de rechazo de consulta %s a %s: %s',
+                    self.name,
+                    email_to,
+                    str(e)
+                )
             
             
     
